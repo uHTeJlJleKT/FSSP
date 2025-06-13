@@ -43,15 +43,15 @@ if uploaded_file:
         # Чтение с правильной строки заголовков
         df = pd.read_excel(uploaded_file, engine='odf', header=6)
         df.columns = df.columns.astype(str).str.strip()  # Удалим пробелы
-
-        # Сброс индексов и очистка
         df = df.reset_index(drop=True)
         df = df.applymap(lambda x: str(x).strip() if pd.notnull(x) else x)
 
         # Интерфейс поиска
         search_fullname = st.text_input("🔤 Введите ФИО (Должник) полностью или частично:")
         search_dob = st.text_input("📅 Введите дату рождения (например, 1987-05-09):")
+        show_all_sorted = st.button("📋 Показать всех должников по алфавиту")
 
+        # Обработка поиска
         results = df
 
         if search_fullname and "Должник" in df.columns:
@@ -60,6 +60,10 @@ if uploaded_file:
         if search_dob and "Д.р. должника" in df.columns:
             results = results[results["Д.р. должника"].str.contains(search_dob, na=False)]
 
+        if show_all_sorted and "Должник" in df.columns:
+            results = df.sort_values(by="Должник")
+
+        # Отображение результатов
         if not results.empty:
             st.success(f"🔍 Найдено совпадений: {len(results)}")
             for idx, row in results.iterrows():
