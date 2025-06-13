@@ -2,6 +2,31 @@
 import streamlit as st
 import pandas as pd
 
+# ===== СТИЛЬ CSS =====
+st.markdown("""
+    <style>
+    body {
+        background-color: #014421;
+        color: #fff;
+    }
+    .reportview-container {
+        background: #014421;
+        color: #fff;
+    }
+    .block-container {
+        background-color: #014421;
+        color: #fff;
+    }
+    th, td {
+        color: #ffeb3b !important;
+    }
+    .stDataFrame thead tr th {
+        color: #ffeb3b !important;
+        background-color: #014421 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("🔍 Поиск по исполнительным производствам")
 
 uploaded_file = st.file_uploader("📎 Загрузите файл .ods", type=["ods"])
@@ -12,7 +37,7 @@ if uploaded_file:
         df = pd.read_excel(uploaded_file, engine='odf', header=6)
         df.columns = df.columns.astype(str).str.strip()  # Удалим пробелы
 
-        # Оставим оригинальные названия, но для удобства отображения можно использовать словарь
+        # Сброс индексов и очистка
         df = df.reset_index(drop=True)
         df = df.applymap(lambda x: str(x).strip() if pd.notnull(x) else x)
 
@@ -32,13 +57,14 @@ if uploaded_file:
             st.success(f"🔍 Найдено совпадений: {len(results)}")
             for idx, row in results.iterrows():
                 st.markdown("---")
-                st.markdown(f"### 👤 Должник: {row.get('Должник', '—')}")
-                st.write(f"**🎂 Дата рождения:** {row.get('Д.р. должника', '—')}")
-                st.write(f"**💰 Сумма долга:** {row.get('Сумма долга', '—')}")
-                st.write(f"**📉 Остаток долга:** {row.get('Остаток долга', '—')}")
-                st.write(f"**⚖️ Сумма исп. сбора:** {row.get('Сумма исп. сбора', '—')}")
-                st.write(f"**🧾 Остаток по исп. сбору:** {row.get('Остаток по исп. сбору', '—')}")
-                st.write(f"**🏢 Взыскатель:** {row.get('Взыскатель', '—')}")
+                st.markdown(f"<h4 style='color:#ffeb3b;'>👤 Должник: {row.get('Должник', '—')}</h4>", unsafe_allow_html=True)
+                st.write(f"🏠 Адрес: {row.get('Адрес должника', '—')}")
+                st.write(f"🎂 Дата рождения: {row.get('Д.р. должника', '—')}")
+                st.write(f"💰 Сумма долга: {row.get('Сумма долга', '—')}")
+                st.write(f"📉 Остаток долга: {row.get('Остаток долга', '—')}")
+                st.write(f"⚖️ Сумма исп. сбора: {row.get('Сумма исп. сбора', '—')}")
+                st.write(f"🧾 Остаток по исп. сбору: {row.get('Остаток по исп. сбору', '—')}")
+                st.write(f"🏢 Взыскатель: {row.get('Взыскатель', '—')}")
         else:
             st.warning("🚫 Совпадений не найдено или нет данных.")
     except Exception as e:
