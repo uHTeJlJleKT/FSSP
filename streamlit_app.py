@@ -1,4 +1,4 @@
-limport streamlit as st
+import streamlit as st
 import pandas as pd
 
 def compare_tables(table1, table2, key_column):
