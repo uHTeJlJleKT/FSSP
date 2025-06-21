@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 
@@ -18,14 +19,14 @@ def compare_tables(table1, table2, key_column):
     return result
 
 def main():
-    st.title("🔍 Сравнение таблиц по смыслу заполненности")
-    uploaded_file1 = st.file_uploader("Загрузите первую таблицу (шаблон)", type=["csv", "xlsx"])
-    uploaded_file2 = st.file_uploader("Загрузите вторую таблицу (для сравнения)", type=["csv", "xlsx"])
+    st.title("🔍 Сравнение таблиц Excel / ODS по смыслу заполненности")
+    uploaded_file1 = st.file_uploader("Загрузите первую таблицу (шаблон)", type=["xlsx", "ods"])
+    uploaded_file2 = st.file_uploader("Загрузите вторую таблицу (для сравнения)", type=["xlsx", "ods"])
     if uploaded_file1 and uploaded_file2:
-        filetype1 = uploaded_file1.name.split(".")[-1]
-        filetype2 = uploaded_file2.name.split(".")[-1]
-        df1 = pd.read_excel(uploaded_file1) if "xls" in filetype1 else pd.read_csv(uploaded_file1)
-        df2 = pd.read_excel(uploaded_file2) if "xls" in filetype2 else pd.read_csv(uploaded_file2)
+        filetype1 = uploaded_file1.name.split(".")[-1].lower()
+        filetype2 = uploaded_file2.name.split(".")[-1].lower()
+        df1 = pd.read_excel(uploaded_file1, engine="odf" if filetype1 == "ods" else None)
+        df2 = pd.read_excel(uploaded_file2, engine="odf" if filetype2 == "ods" else None)
         st.success("✅ Таблицы загружены")
         st.write("Выберите столбец для поиска совпадений:")
         common_columns = list(set(df1.columns) & set(df2.columns))
